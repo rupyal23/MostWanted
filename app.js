@@ -13,6 +13,7 @@ function app(people){
       break;
     case 'no':
       // TODO: search by traits
+      searchByTraits(people)
       break;
       default:
     app(people); // restart app
@@ -100,4 +101,56 @@ function yesNo(input){
 // helper function to pass in as default promptFor validation
 function chars(input){
   return true; // default validation only
+}
+
+function searchByTraits(people){
+  let searchTypeByTrait = prompt("How do you want to perform your search? Enter \n'1' for GENDER. \n'2' for DATE OF BIRTH. \n'3' for HEIGHT. \n'4' for WEIGHT. \n'5' for EYECOLOR. \n'6' for OCCUPATION.");
+  switch(searchTypeByTrait){
+    case '1': //search by gender
+      
+      searchByGender(people)
+      
+    case '2': // search by date of birth
+      searchByTraits(people)
+      break;
+      default:
+    app(people); // restart app
+      break;
+  }
+}
+
+function searchByGender(people){
+    var typeGender = prompt("Enter '1' for MALE or '2' for FEMALE");
+    var foundPerson = people.filter(function(el){
+    if(el.gender === typeGender.toLowerCase()){
+      return true;
+    }
+    else{
+      return false;
+    }
+  })
+  // TODO: find the person using the name they entered
+  return foundPerson;
+}
+
+
+function searchByDateOfBirth(people){
+//use .filter
+//display people filtered
+}
+
+function searchByHeight(people){
+
+}
+
+function searchByWeight(people){
+
+}
+
+function searchByEyeColor(people){
+
+}
+
+function searchByOccupation(people){
+
 }
