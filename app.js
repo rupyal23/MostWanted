@@ -31,14 +31,16 @@ function mainMenu(person, people){
     return app(people); // restart
   }
 
-  var displayOption = prompt("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'");
+  var displayOption = promptFor("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'", chars);
 
   switch(displayOption){
     case "info":
     // TODO: get person's info
+		displayPerson(person);
     break;
     case "family":
     // TODO: get person's family
+		displayFamily(people, person);
     break;
     case "descendants":
     // TODO: get person's descendants
@@ -57,16 +59,15 @@ function searchByName(people){
   var firstName = promptFor("What is the person's first name?", chars);
   var lastName = promptFor("What is the person's last name?", chars);
 
-  var foundPerson = people.filter(function(person){
-    if(person.firstName === firstName && person.lastName === lastName){
+	let person = people.filter(function(el){
+    if(el.firstName === firstName && el.lastName === lastName){
       return true;
     }
-    else{
-      return false;
-    }
-  })
+  });
+
+	
   // TODO: find the person using the name they entered
-  return foundPerson;
+  return person[0];
 }
 
 // alerts a list of people
@@ -85,6 +86,46 @@ function displayPerson(person){
   alert(personInfo);
 }
 
+//family search functions
+
+function displayFamily(people, foundPerson){
+	var personFamily = "Spouse: " + displaySpouse(people, foundPerson) + "\n";
+		personFamily += "Children: " + displayChildren(people, foundPerson) + "\n";
+		personFamily += "Parents: " + displayParents(people, foundPerson) + "\n";
+}
+
+function displaySpouse(people, foundPerson){
+		var spouse = people.filter( function(el){
+			if (el.currentSpouse===foundPerson.id){
+			console.log(el.firstName + " " + el.lastName);
+			return;
+		}
+		else	
+			return false;
+	});
+}
+
+//function displayChildren(people, foundPerson){
+//		var children = people.filter( function(el){
+//		if (el.parents===foundPerson.id){
+//		return children;
+//		}
+//		else
+//			return false;
+//	});
+///}
+
+//function displayParents(people, foundPerson){
+//		var parents = people.filter( function(el){
+	//	if (el.id===foundPerson.parents){
+	//	return true;
+	//	}
+	//	else
+	//		return false;
+//});
+//}
+
+
 // function that prompts and validates user input
 function promptFor(question, valid){
   do{
@@ -92,6 +133,8 @@ function promptFor(question, valid){
   } while(!response || !valid(response));
   return response;
 }
+
+
 
 // helper function to pass into promptFor to validate yes/no answers
 function yesNo(input){
