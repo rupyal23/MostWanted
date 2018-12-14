@@ -9,7 +9,7 @@ function app(people){
   switch(searchType){
     case 'yes':
       var foundPerson = searchByName(people);
-      mainMenu(foundPerson, people);
+      mainMenu(foundPerson[0], people);
       break;
     case 'no':
       // TODO: search by traits
@@ -58,8 +58,8 @@ function mainMenu(person, people){
 //searches by name - default validates the input, filters the data with the user input
 //changed the casing
 function searchByName(people){
-  var firstName = promptFor("What is the person's first name?", chars);
-  var lastName = promptFor("What is the person's last name?", chars);
+  var firstName = promptFor("What is the person's first name?", validateAlphabets);
+  var lastName = promptFor("What is the person's last name?", validateAlphabets);
 
 	let person = people.filter(function(el){
     if(el.firstName.toLowerCase() === firstName.toLowerCase() && el.lastName.toLowerCase() === lastName.toLowerCase()){
@@ -85,39 +85,37 @@ function displayPeople(people){
 function displayPerson(person){
   // print all of the information about a person:
   // height, weight, age, name, occupation, eye color.
-  var personInfo = "First Name: " + person[0].firstName + "\n"; //temporary put index 0 to check output -k
-  personInfo += "Last Name: " + person[0].lastName + "\n";      // should replace with 'el' using map or filter, i guess -k
+
+  var personInfo = "First Name: " + person.firstName + "\n"; 
+  personInfo += "Last Name: "+person.lastName+"\n"+"Gender: "+person.gender+"\n"+"Height: "+ person.height+" inches"+"\n"+"Weight: "+person.weight+" lbs"+"\n"+"Occupation: "+person.occupation+"\n"+"Eye Color: "+person.eyeColor;     
   // TODO: finish getting the rest of the information to display
+  //got all traits displayed, waitind for age to be done
   alert(personInfo);
 }
 
-//family search functions
+//DISPLAY FUNCTIONS 
 
 function displayFamily(people, foundPerson){
 	var personFamily = "Spouse: " + displaySpouse(people, foundPerson) + "\n";
-		personFamily += "Children: " + displayChildren(people, foundPerson) + "\n";
-		personFamily += "Parents: " + displayParents(people, foundPerson) + "\n";
+		// personFamily += "Children: " + displayChildren(people, foundPerson) + "\n";
+		// personFamily += "Parents: " + displayParents(people, foundPerson) + "\n";
+    alert(personFamily);
 }
 
 function displaySpouse(people, foundPerson){
-		var spouse = people.filter( function(el){
-			if (el.currentSpouse===foundPerson.id){
-			console.log(el.firstName + " " + el.lastName);
-			return;
-		}
-		else	
-			return false;
+		let spouse = people.filter(function(el){
+			el.currentSpouse===foundPerson.id		
 	});
 }
 
-//function displayChildren(people, foundPerson){
-//		var children = people.filter( function(el){
-//		if (el.parents===foundPerson.id){
-//		return children;
-//		}
-//		else
-//			return false;
-//	});
+// function displayChildren(people, foundPerson){
+// 		var children = people.filter( function(el){
+// 		if (el.parents===foundPerson.id){
+// 		return children;
+// 		}
+// 		else
+// 			return false;
+// 	});
 ///}
 
 //function displayParents(people, foundPerson){
@@ -152,15 +150,31 @@ function chars(input){
 }
 
 function searchByTraits(people){
-  let searchTypeByTrait = prompt("How do you want to perform your search? Enter \n'1' for GENDER. \n'2' for DATE OF BIRTH. \n'3' for HEIGHT. \n'4' for WEIGHT. \n'5' for EYECOLOR. \n'6' for OCCUPATION.");
+  let searchTypeByTrait = prompt("How do you want to perform your search? Enter \n'0' to ENTER MULTIPLE TRAITS. \n'1' for GENDER. \n'2' for Age. \n'3' for DATE OF BIRTH. \n'4' for HEIGHT. \n'5' for WEIGHT. \n'6' for EYECOLOR. \n'7' for OCCUPATION. \n'8' to RESTART. \n'9' to QUIT.");
   switch(searchTypeByTrait){
+    case '0': //for Multiple Traits
+      searchByMultipleTraits(people);
     case '1': //search by gender
-      searchByGender(people);     
-    case '2': // search by date of birth
+      searchByGender(people); 
+    case '2': //search by Age
+      searchByAge(people);    
+    case '3': // search by date of birth
       searchByDateOfBirth(people);
-      break;
-      default:
-    app(people); // restart app
+    case '4': //search by Height
+      searchByHeight(people);
+    case '5': //seacrh by weight
+      searchByWeight(people);
+    case '6': //search by eye color
+      searchByEyeColor(people);
+    case '7': // search by occupation
+      searchByOccupation(people);
+    case '8':  //goes back to main function app
+      app(people);
+    case '9': //to quit from the application
+      return;
+
+    default:
+      searchByTraits(people); // restart app
       break;
   }
 }
@@ -193,18 +207,64 @@ function searchByDateOfBirth(people){
 }
 
 function searchByHeight(people){
+  let heightSearched = promptFor("Please enter the person height in inches:", validateNumber);
+  let displayPeopleByHeight = people.filter(function(el){
+    return el.height == heightSearched;
+  });
+  alert(displayPeopleByHeight.length+" persons found based on your search.");
+  while(displayPeopleByHeight.length == 0){
+    searchByTraits(people);
+  }
+  displayPeople(displayPeopleByHeight);
+  alert("Please enter the name of the person now:")
+  let personFoundByHeight = searchByName(displayPeopleByHeight);
+  mainMenu(personFoundByHeight[0], people);   //couldn't pass this as object in main menu function, so did this little trick?Question?is this right way??
 
 }
 
 function searchByWeight(people){
-
+  let weightSearched = promptFor("Please enter the person weight in lbs:", validateNumber);
+  let displayPeopleByWeight = people.filter(function(el){
+      return el.weight == weightSearched;
+  });
+  alert(displayPeopleByWeight.length+" persons found based on your search.");
+  while(displayPeopleByWeight.length == 0){
+    searchByTraits(people);
+  }
+  displayPeople(displayPeopleByWeight);
+  alert("Please enter the name of the person now");
+  let personFoundByWeight = searchByName(displayPeopleByWeight);
+  mainMenu(personFoundByWeight[0], people);
 }
 
 function searchByEyeColor(people){
-
+  let searchedColor = promptFor("Please enter the Eye Color:", validateAlphabets);
+  let displayPeopleByEyeColor = people.filter(function(el){
+    return el.eyeColor.toLowerCase() == searchedColor.toLowerCase();
+  });
+  alert(displayPeopleByEyeColor.length+" persons found based on your search");
+  while(displayPeopleByEyeColor.length == 0){
+    searchByTraits(people);
+  }
+  displayPeople(displayPeopleByEyeColor);
+  alert("Please enter the name of the person now:");
+  let personFoundByEyeColor = searchByName(displayPeopleByEyeColor);
+  mainMenu(personFoundByEyeColor[0], people);
 }
 
 function searchByOccupation(people){
+  let searchedOccupation = promptFor("Please enter the person's Occupation:", validateAlphabets);
+  let displayPeopleByOccupation = people.filter(function(el){
+    return el.occupation.toLowerCase() == searchedOccupation.toLowerCase();
+  });
+  alert(displayPeopleByOccupation.length+" persons found based on your search.");
+  while(displayPeopleByOccupation == 0){
+    searchByTraits(people);
+  }
+  displayPeople(displayPeopleByOccupation);
+  alert("Please enter the name of the person now:");
+  let personFoundByOccupation = searchByName(displayPeopleByOccupation);
+  mainMenu(personFoundByOccupation[0], people);
 
 }
 
@@ -237,4 +297,40 @@ function validateDate(input){
     return false;
   
   }
+}
+
+//name validation, can only input english aplhabets
+function validateAlphabets(input){
+   let acceptedNameLetters = /^[A-Za-z]+$/;
+   if(input.match(acceptedNameLetters)){
+    return true;
+   }
+   else{
+    alert("Please input aplhabet characters only");
+    return false;
+   }
+}
+
+// function to validate height and weight are only numbers
+function validateNumber(input){
+  if(!isNaN(input)){
+    return true;
+  }
+  else{
+    return false; 
+  }
+}
+
+
+//MULTIPLE TRAITS SEARCH FUNCTIONALITY - NOT DONE YET
+function searchByMultipleTraits(people){
+  alert("Enter alteast 2 traits to begin your search.");
+  let numTraits = promptFor("How many traits do you want to enter out of the following.\n1) Gender\n2) Age\n3) Occupation\n4) Eye Color\n5) Height\n6) Weight", validateNumber);
+  alert("Please enter the "+numTraits+" traits that you want to enter");
+  let checkResponse = prompt("Do you want to enter Gender?", yesNo);
+  
+}
+
+function validateMultipleTraits(input){
+  return true;        //not right, just letting through
 }
