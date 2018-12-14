@@ -89,23 +89,25 @@ function displayPerson(person){
   var personInfo = "First Name: " + person.firstName + "\n"; 
   personInfo += "Last Name: "+person.lastName+"\n"+"Gender: "+person.gender+"\n"+"Height: "+ person.height+" inches"+"\n"+"Weight: "+person.weight+" lbs"+"\n"+"Occupation: "+person.occupation+"\n"+"Eye Color: "+person.eyeColor;     
   // TODO: finish getting the rest of the information to display
-  //got all traits displayed, waitind for age to be done
+  //got all traits displayed, waiting for age to be done
   alert(personInfo);
 }
 
 //DISPLAY FUNCTIONS 
 
 function displayFamily(people, foundPerson){
-	var personFamily = "Spouse: " + displaySpouse(people, foundPerson) + "\n";
+  let foundSpouse = findSpouse(people, foundPerson);
+	var personFamily = "Spouse: " + foundSpouse + "\n";
 		// personFamily += "Children: " + displayChildren(people, foundPerson) + "\n";
 		// personFamily += "Parents: " + displayParents(people, foundPerson) + "\n";
     alert(personFamily);
 }
 
-function displaySpouse(people, foundPerson){
+function findSpouse(people, foundPerson){
 		let spouse = people.filter(function(el){
-			el.currentSpouse===foundPerson.id		
+			return el.currentSpouse===foundPerson.id		
 	});
+    return spouse.toString();
 }
 
 // function displayChildren(people, foundPerson){
