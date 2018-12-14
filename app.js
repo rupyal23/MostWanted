@@ -3,6 +3,22 @@
 Build all of your functions for displaying and gathering information below (GUI).
 */
 
+function howOld(person){
+	let birthDateExact = Date.parse(person.dob);
+	var minutes = 60000
+	var hours = 60*minutes
+	var days = 24*hours
+	var years = 365*days
+	var ageYears = Math.round(d/years);
+	return ageYears
+}
+
+function ageConversion(person){
+	for (i=0; i< people.length; i++){
+		person.age = howOld(person)
+		}
+}
+
 // app is the function called to start the entire application
 function app(people){
   var searchType = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
