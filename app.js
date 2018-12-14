@@ -112,9 +112,9 @@ function displayPerson(person){
 //DISPLAY FUNCTIONS 
 
 function displayFamily(people, foundPerson){
-  let foundSpouse = findSpouse(people, foundPerson);
-	var personFamily = "Spouse: " + foundSpouse + "\n";
-		// personFamily += "Children: " + displayChildren(people, foundPerson) + "\n";
+  //let foundSpouse = findSpouse(people, foundPerson);
+	var personFamily = "Spouse: " + findSpouse(people, foundPerson)[0].firstName+" "+findSpouse(people, foundPerson)[0].lastName+ "\n";
+	    personFamily += "Children: " + findChildren(people, foundPerson) + "\n";
 		// personFamily += "Parents: " + displayParents(people, foundPerson) + "\n";
     alert(personFamily);
 }
@@ -123,18 +123,15 @@ function findSpouse(people, foundPerson){
 		let spouse = people.filter(function(el){
 			return el.currentSpouse===foundPerson.id		
 	});
-    return spouse.toString();
-}
+    return spouse;
+  }
 
-// function displayChildren(people, foundPerson){
-// 		var children = people.filter( function(el){
-// 		if (el.parents===foundPerson.id){
-// 		return children;
-// 		}
-// 		else
-// 			return false;
-// 	});
-///}
+function findChildren(people, foundPerson){
+		let children = people.filter(function(el){
+		  return el.parents===foundPerson.id
+	});
+		return children;
+}
 
 //function displayParents(people, foundPerson){
 //		var parents = people.filter( function(el){
