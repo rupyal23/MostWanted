@@ -13,7 +13,7 @@ function app(people){
       break;
     case 'no':
       // TODO: search by traits
-      searchByTraits(people)
+      searchByTraits(people);
       break;
       default:
     app(people); // restart app
@@ -55,19 +55,24 @@ function mainMenu(person, people){
   }
 }
 
+//searches by name - default validates the input, filters the data with the user input
+//changed the casing
 function searchByName(people){
   var firstName = promptFor("What is the person's first name?", chars);
   var lastName = promptFor("What is the person's last name?", chars);
 
 	let person = people.filter(function(el){
-    if(el.firstName === firstName && el.lastName === lastName){
+    if(el.firstName.toLowerCase() === firstName.toLowerCase() && el.lastName.toLowerCase() === lastName.toLowerCase()){
       return true;
+    }
+    else
+    {
+      return false;
     }
   });
 
-	
   // TODO: find the person using the name they entered
-  return person[0];
+  return person;
 }
 
 // alerts a list of people
@@ -80,8 +85,8 @@ function displayPeople(people){
 function displayPerson(person){
   // print all of the information about a person:
   // height, weight, age, name, occupation, eye color.
-  var personInfo = "First Name: " + person.firstName + "\n";
-  personInfo += "Last Name: " + person.lastName + "\n";
+  var personInfo = "First Name: " + person[0].firstName + "\n"; //temporary put index 0 to check output -k
+  personInfo += "Last Name: " + person[0].lastName + "\n";      // should replace with 'el' using map or filter, i guess -k
   // TODO: finish getting the rest of the information to display
   alert(personInfo);
 }
@@ -150,11 +155,9 @@ function searchByTraits(people){
   let searchTypeByTrait = prompt("How do you want to perform your search? Enter \n'1' for GENDER. \n'2' for DATE OF BIRTH. \n'3' for HEIGHT. \n'4' for WEIGHT. \n'5' for EYECOLOR. \n'6' for OCCUPATION.");
   switch(searchTypeByTrait){
     case '1': //search by gender
-      
-      searchByGender(people)
-      
+      searchByGender(people);     
     case '2': // search by date of birth
-      searchByTraits(people)
+      searchByDateOfBirth(people);
       break;
       default:
     app(people); // restart app
@@ -162,24 +165,31 @@ function searchByTraits(people){
   }
 }
 
+//search by Gender function - completed
 function searchByGender(people){
-    var typeGender = prompt("Enter '1' for MALE or '2' for FEMALE");
-    var foundPerson = people.filter(function(el){
-    if(el.gender === typeGender.toLowerCase()){
-      return true;
-    }
-    else{
-      return false;
-    }
-  })
-  // TODO: find the person using the name they entered
-  return foundPerson;
+    let typeGender = promptFor("Enter 'male' or 'female'", validateGender);
+    let displayPeopleByGender = people.filter(function(el){
+      return el.gender == typeGender.toLowerCase();
+    });
+    alert("Total "+displayPeopleByGender.length+" persons found based on your search");
+    displayPeople(displayPeopleByGender);
+    alert("Please enter the Name now:");
+    let personFoundByGender = searchByName(displayPeopleByGender);
+    //displayPerson(personFoundByGender);
+    mainMenu(personFoundByGender[0], people);   //couldn't pass this as object, so did this little trick?Question?
 }
 
-
+//search by date of birth- validates date and displays the person.
 function searchByDateOfBirth(people){
-//use .filter
-//display people filtered
+  let dateOfBirth = promptFor("Please enter the date of birth: xx/xx/xxxx format", validateDate);
+  let displayPeopleByDob = people.filter(function(el){
+      return el.dob == dateOfBirth;   //gotta fix the comparison of one digit month to two digit month.      
+  });
+  alert(displayPeopleByDob.length+" person found.");
+  // displayPeople(displayPeopleByDob);
+  // alert("Please enter the Name now:");
+  // let personFoundByDob = searchByName(displayPeopleByDob);
+  mainMenu(displayPeopleByDob[0], people);
 }
 
 function searchByHeight(people){
@@ -196,4 +206,35 @@ function searchByEyeColor(people){
 
 function searchByOccupation(people){
 
+}
+
+//helper function to validate gender
+function validateGender(input){
+  if(input.toLowerCase() == "male" || input.toLowerCase() == "female"){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
+
+//to check if date is valid format and is between range of year 1900 - current
+function validateDate(input){
+  let acceptedFormat = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+  if(input.match(acceptedFormat)){
+    let enteredDate = input.split("/");
+    if(enteredDate[0] <1 || enteredDate[0] > 13 || enteredDate[1] < 1 || enteredDate [1] > 31 || enteredDate[2] > new Date().getFullYear() || enteredDate[2] < 1900 ){
+      alert("Not a valid date. Please enter again")
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+  else{
+    alert("Not a valid format");
+    return false;
+  
+  }
 }
