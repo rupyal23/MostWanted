@@ -112,10 +112,11 @@ function displayPerson(person){
 //DISPLAY FUNCTIONS 
 
 function displayFamily(people, foundPerson){
-  //let foundSpouse = findSpouse(people, foundPerson);
-	var personFamily = "Spouse: " + findSpouse(people, foundPerson)[0].firstName+" "+findSpouse(people, foundPerson)[0].lastName+ "\n";
-	    personFamily += "Children: " + findChildren(people, foundPerson) + "\n";
-		// personFamily += "Parents: " + displayParents(people, foundPerson) + "\n";
+  let displaySpouse = findSpouse(people, foundPerson);
+  let displayChildren = findChildren(people, foundPerson);
+	var personFamily = "Spouse: " + displaySpouse[0].firstName+" "+displaySpouse[0].lastName+ "\n";
+	    personFamily += "Children: " + displayChildren.join(", ")+"."+ "\n";
+		 // personFamily += "Parents: " + displayParents(people, foundPerson) + "\n";
     alert(personFamily);
 }
 
@@ -123,25 +124,33 @@ function findSpouse(people, foundPerson){
 		let spouse = people.filter(function(el){
 			return el.currentSpouse===foundPerson.id		
 	});
+    if(foundPerson.currentSpouse){
+    }
+    else{
+      spouse = [{"firstName" : "Not found in", "lastName" : "database."}]; //in case of spouse being null value
+    }
     return spouse;
   }
 
 function findChildren(people, foundPerson){
 		let children = people.filter(function(el){
-		  return el.parents===foundPerson.id
+		  return parseInt(el.parents)===foundPerson.id;
 	});
-		return children;
+		if(children.length >= 1){
+      children = children.map(function(el){
+        return el.firstName + " " + el.lastName;
+      });
+    }
+    else{
+      children = ["None."];
+    }
+    return children;
 }
 
-//function displayParents(people, foundPerson){
-//		var parents = people.filter( function(el){
-	//	if (el.id===foundPerson.parents){
-	//	return true;
-	//	}
-	//	else
-	//		return false;
-//});
-//}
+// function findParents(people, foundPerson){
+// 		var parents = people.filter( function(el){
+// 		  return el.id===foundPerson.parents;
+//     });
 
 
 // function that prompts and validates user input
