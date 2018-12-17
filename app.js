@@ -4,7 +4,6 @@ Build all of your functions for displaying and gathering information below (GUI)
 */
 
 
-
 // app is the function called to start the entire application
 function app(people){
   var searchType = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
@@ -307,9 +306,27 @@ function searchByDateOfBirth(people){
   mainMenu(displayPeopleByDob[0], people);
 }
 
+function howOld(person){
+  let birthDateExact = Date.parse(person.dob);
+  var minutes = 60000
+  var hours = 60*minutes
+  var days = 24*hours
+  var years = 365*days
+  let today = new Date ();
+  console.log(today)
+  let relBirthDate = today - birthDateExact;
+  let ageYears = Math.floor(relBirthDate/years);
+  return ageYears;
+}
+  
 function searchByAge(people){
-  let ageSearched = promptFor("Please enter the person's age in years:", validateAge);
-  let displayPeopleByAge = people.filter(function(el){
+  let ageSearched = promptFor("Please enter the person's age in years:", validateAge);    
+  let arrayWithAges = []
+    arrayWithAges = people.map(function(element){
+    element.age = howOld(element);
+    return element;
+    });
+  let displayPeopleByAge = arrayWithAges.filter(function(el){
     return el.age == ageSearched;
   });
   alert(displayPeopleByAge.length+" persons found based on your search.");
@@ -516,27 +533,36 @@ function multiSearchByDateOfBirth(people){
       searchByMultipleTraits(filteredByDob);
     }
     return filteredByDob;
-}
 
-// function multiSearchByAge(filteredPeople){
-//   let yesNoQuestion = promptFor("Do you know the person's age. Enter 'yes' or 'no'", yesNo).toLowerCase();
-//   switch(yesNoQuestion){
-//     case 'yes':
-//       let ageSearched = promptFor("Please enter the person's age in years:", validateAge);
-//       let filteredByAge = filteredPeople.filter(function(el){
-//           return el.age == ageSearched;
-//       });
-//       alert("Total "+filteredByAge.length+" persons found based on your search");
-//       displayPeople(filteredByAge);
-//       return filteredByAge;
-//     case 'no':
-//     multiSearchByHeight(filteredPeople);
-//     break;
-//     default:
-//     searchByMultipleTraits(people);
-//   }
-// }
-    
+  }
+
+function multiSearchByAge(filteredPeople){
+  let ageSearched = promptFor("Please enter the person's age in years:", validateAge);    
+    let arrayWithAges = []
+    arrayWithAges = people.map(function(element){
+      element.age = howOld(element);
+      return element;
+    });
+  let displayPeopleByAge = arrayWithAges.filter(function(el){
+    return el.age == ageSearched;
+  });
+  alert(displayPeopleByAge.length+" persons found based on your search.");
+  while(displayPeopleByAge.length == 0){
+    displayPeople(displayPeopleByAge);
+    return displayPeopleByAge;
+    } 
+  }
+
+
+function multiSearchByHeight(people){
+  let heightSearched = promptFor("Please enter the person height in inches:", validateNumber);
+  let filteredByHeight = filteredPeople.filter(function(el){
+    return el.height == heightSearched;
+  });
+alert("Total "+filteredByHeight.length+" persons found based on your search");
+    displayPeople(filteredByHeight);
+    return filteredByHeight;
+  }    
 
 function multiSearchByHeight(people){
     let heightSearched = promptFor("Please enter the person height in inches:", validateNumber);
