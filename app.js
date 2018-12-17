@@ -292,8 +292,13 @@ function searchByGender(people){
 //search by date of birth- validates date and displays the person.
 function searchByDateOfBirth(people){
   let dateOfBirth = promptFor("Please enter the date of birth: xx/xx/xxxx format", validateDate);
+   if(dateOfBirth[0][0] == 0)
+    {
+      dateOfBirth[0] = dateOfBirth[0][1];
+      console.log(dateOfBirth[0]);
+    }
   let displayPeopleByDob = people.filter(function(el){
-      return el.dob == dateOfBirth;   //gotta fix the comparison of one digit month to two digit month.      
+      return el.dob === dateOfBirth;       //gotta fix the comparison of one digit month to two digit month.      
   });
   alert(displayPeopleByDob.length+" person found.");
   // displayPeople(displayPeopleByDob);
@@ -393,6 +398,11 @@ function validateDate(input){
   let acceptedFormat = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
   if(input.match(acceptedFormat)){
     let enteredDate = input.split("/");
+    // if(enteredDate[0][0] == 0)
+    // {
+    //   enteredDate[0] = enteredDate[0][1];
+    //   console.log(enteredDate[0]);
+    // }
     if(enteredDate[0] <1 || enteredDate[0] > 13 || enteredDate[1] < 1 || enteredDate [1] > 31 || enteredDate[2] > new Date().getFullYear() || enteredDate[2] < 1900 ){
       alert("Not a valid date. Please enter again")
       return false;
@@ -404,7 +414,6 @@ function validateDate(input){
   else{
     alert("Not a valid format");
     return false;
-  
   }
 }
 
