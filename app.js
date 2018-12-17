@@ -3,21 +3,7 @@
 Build all of your functions for displaying and gathering information below (GUI).
 */
 
-function howOld(person){
-	let birthDateExact = Date.parse(person.dob);
-	var minutes = 60000
-	var hours = 60*minutes
-	var days = 24*hours
-	var years = 365*days
-	var ageYears = Math.round(d/years);
-	return ageYears
-}
 
-function ageConversion(person){
-	for (i=0; i< people.length; i++){
-		person.age = howOld(person)
-		}
-}
 
 // app is the function called to start the entire application
 function app(people){
@@ -44,7 +30,7 @@ function mainMenu(person, people){
 
   if(!person){
     alert("Could not find that individual.");
-    return app(people); // restart
+    return app(people); // 
   }
 
   var displayOption = promptFor("Found " + person.firstName + " " + person.lastName + " . Do you want to know their 'info', 'family', or 'descendants'? Type the option you want or 'restart' or 'quit'", chars);
@@ -64,9 +50,9 @@ function mainMenu(person, people){
     break;
     case "restart":
     app(people); // restart
-    break;
+    return;
     case "quit":
-    return; // stop execution
+    break; // stop execution
     default:
     return mainMenu(person, people); // ask again
   }
@@ -256,7 +242,7 @@ function searchByTraits(people){
     case '8':  //goes back to main function app
       app(people);
     case '9': //to quit from the application
-      return;
+      exit();
     default:
       searchByTraits(people); // restart app
       break;
@@ -288,6 +274,21 @@ function searchByDateOfBirth(people){
   // alert("Please enter the Name now:");
   // let personFoundByDob = searchByName(displayPeopleByDob);
   mainMenu(displayPeopleByDob[0], people);
+}
+
+function searchByAge(people){
+  let ageSearched = promptFor("Please enter the person's age in years:", validateAge);
+  let displayPeopleByAge = people.filter(function(el){
+    return el.age == ageSearched;
+  });
+  alert(displayPeopleByAge.length+" persons found based on your search.");
+  while(displayPeopleByAge.length == 0){
+    searchByTraits(people);
+  }
+  displayPeople(displayPeopleByAge);
+  alert("Please enter the name of the person now:")
+  let personFoundByAge = searchByName(displayPeopleByAge);
+  mainMenu(personFoundByAge[0], people);   //couldn't pass this as object in main menu function, so did this little trick?Question?is this right way??
 }
 
 function searchByHeight(people){
@@ -348,7 +349,6 @@ function searchByOccupation(people){
   alert("Please enter the name of the person now:");
   let personFoundByOccupation = searchByName(displayPeopleByOccupation);
   mainMenu(personFoundByOccupation[0], people);
-
 }
 
 //helper function to validate gender
@@ -395,6 +395,22 @@ function validateAlphabets(input){
 }
 
 // function to validate height and weight are only numbers
+function validateAge(input){
+  if(!isNaN(input)){
+      if (0 < input < 2018){
+      return true;
+    }
+    
+      else{
+    return false;
+    }
+  }
+  else{
+    return false; 
+  }
+}
+
+// function to validate height and weight are only numbers
 function validateNumber(input){
   if(!isNaN(input)){
     return true;
@@ -406,14 +422,119 @@ function validateNumber(input){
 
 
 //MULTIPLE TRAITS SEARCH FUNCTIONALITY - NOT DONE YET
-function searchByMultipleTraits(people){
-  alert("Enter alteast 2 traits to begin your search.");
-  let numTraits = promptFor("How many traits do you want to enter out of the following.\n1) Gender\n2) Age\n3) Occupation\n4) Eye Color\n5) Height\n6) Weight", validateNumber);
-  alert("Please enter the "+numTraits+" traits that you want to enter");
-  let checkResponse = prompt("Do you want to enter Gender?", yesNo);
-  
+
+function searchByMultipleTraits(people) {
+  var filteredPeople = people;
+ 
+  alert("Enter each desired trait to search for: ");
+ 
+
+    filteredPeople = multiSearchByGender
+    
+
+    filteredPeople = multiSearchByDateOfBirth(filteredPeople);
+      
+
+    filteredPeople = multiSearchByHeight(filteredPeople);
+      
+
+    filteredPeople = multiSearchByWeight(filteredPeople);
+      
+
+    filteredPeople = multiSearchByEyeColor(filteredPeople);
+
+    filteredPeople = multiSearchByAge(filteredPeople);
+    
+    displayPeople(filteredPeople);
+    
+    alert("Please enter the name of the person now:");
+    
+    let personFoundByMultiSearch = searchByName(people);
+    
+    mainMenu(personFoundByMultiSearch[0], people);
 }
 
-function validateMultipleTraits(input){
-  return true;        //not right, just letting through
+function multiSearchByGender(people){
+    let yesNoQuestion = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
+    
+    switch(yesNOQuestion){
+    case 'yes':
+    let typeGender = promptFor("Enter 'male' or 'female'", validateGender);
+    let filteredPeople = people.filter(function(el){
+        return el.gender == typeGender.toLowerCase(); 
+    });
+    alert("Total "+filteredPeople.length+" persons found based on your search");
+    displayPeople(filteredPeople);
+    return filteredPeople;
+    case 'no':
+      break;
+      default:
+      searchByMultipleTraits(people);
+      break;
+    }
 }
+
+function multiSearchByDateOfBirth(filteredPeople){
+  let dateOfBirth = promptFor("Please enter the date of birth: xx/xx/xxxx format", validateDate);
+  let filteredByDob = filteredPeople.filter(function(el){
+      return el.dob == dateOfBirth;   //gotta fix the comparison of one digit month to two digit month.      
+  });
+  alert("Total "+filteredByDob.length+" persons found based on your search");
+    displayPeople(filteredByDob);
+    return filteredByDob;
+  }
+    
+
+function multiSearchByAge(filteredPeople){
+  let ageSearched = promptFor("Please enter the person's age in years:", validateAge);
+  let filteredByAge = filteredPeople.filter(function(el){
+      return el.age == ageSearched;
+  });
+ alert("Total "+filteredByAge.length+" persons found based on your search");
+    displayPeople(filteredByAge);
+    return filteredByAge;
+  }
+    
+    
+
+function multiSearchByHeight(people){
+  let heightSearched = promptFor("Please enter the person height in inches:", validateNumber);
+  let filteredByHeight = filteredPeople.filter(function(el){
+    return el.height == heightSearched;
+  });
+alert("Total "+filteredByHeight.length+" persons found based on your search");
+    displayPeople(filteredByHeight);
+    filteredByHeight;
+  }
+    
+
+function multiSearchByWeight(people){
+  let weightSearched = promptFor("Please enter the person weight in lbs:", validateNumber);
+  let filteredByWeight = filteredPeople.filter(function(el){
+      return el.weight == weightSearched;
+  });
+  alert("Total "+filteredByWeight.length+" persons found based on your search");
+    displayPeople(filteredByWeight);
+    return filteredByWeight;
+  }
+    
+function multiSearchByEyeColor(people){
+  let searchedColor = promptFor("Please enter the Eye Color:", validateAlphabets);
+  let filteredByEye = filteredPeople.filter(function(el){
+    return el.eyeColor.toLowerCase() == searchedColor.toLowerCase();
+  });
+   alert("Total "+filteredByEye.length+" persons found based on your search");
+    displayPeople(filteredByEye);
+    return filteredByEye;
+  }
+    
+
+function multiSearchByOccupation(people){
+  let searchedOccupation = promptFor("Please enter the person's Occupation:", validateAlphabets);
+  let filteredByOcc = filteredPeople.filter(function(el){
+    return el.occupation.toLowerCase() == searchedOccupation.toLowerCase();
+  });
+ alert("Total "+filteredByOcc.length+" persons found based on your search");
+    displayPeople(filteredByOcc);
+    return filteredByOcc;
+  }
