@@ -308,7 +308,6 @@ function howOld(person){
   var days = 24*hours
   var years = 365*days
   let today = new Date ();
-  console.log(today)
   let relBirthDate = today - birthDateExact;
   let ageYears = Math.floor(relBirthDate/years);
   return ageYears;
@@ -474,8 +473,8 @@ function searchByMultipleTraits(people) {
         filteredPeople = multiSearchByGender(filteredPeople);
         break;
       case '2' :
-        // filteredPeople = multiSearchByAge(filteredPeople);
-        //break;
+        filteredPeople = multiSearchByAge(filteredPeople);
+        break;
       case '3' :
         filteredPeople = multiSearchByDateOfBirth(filteredPeople);
         break;
@@ -530,13 +529,14 @@ function multiSearchByDateOfBirth(people){
 function multiSearchByAge(filteredPeople){
   let ageSearched = promptFor("Please enter the person's age in years:", validateAge);    
     let arrayWithAges = []
-    arrayWithAges = people.map(function(element){
+      arrayWithAges = filteredPeople.map(function(element){
       element.age = howOld(element);
       return element;
     });
   let displayPeopleByAge = arrayWithAges.filter(function(el){
     return el.age == ageSearched;
   });
+
   alert(displayPeopleByAge.length+" persons found based on your search.");
   while(displayPeopleByAge.length == 0){
     displayPeople(displayPeopleByAge);
