@@ -291,10 +291,11 @@ function searchByGender(people){
 //search by date of birth- validates date and displays the person.
 function searchByDateOfBirth(people){
   let dateOfBirth = promptFor("Please enter the date of birth: xx/xx/xxxx format", validateDate);
-   if(dateOfBirth[0][0] == 0)
+  let dateOfBirthStringify = dateOfBirth.split("/");
+    if(dateOfBirthStringify[0][0] == 0)
     {
-      dateOfBirth[0] = dateOfBirth[0][1];
-      console.log(dateOfBirth[0]);
+      dateOfBirthStringify[0] = dateOfBirthStringify[0][1];
+      dateOfBirth = dateOfBirthStringify.join("/");
     }
   let displayPeopleByDob = people.filter(function(el){
       return el.dob === dateOfBirth;       //gotta fix the comparison of one digit month to two digit month.      
@@ -313,7 +314,6 @@ function howOld(person){
   var days = 24*hours
   var years = 365*days
   let today = new Date ();
-  console.log(today)
   let relBirthDate = today - birthDateExact;
   let ageYears = Math.floor(relBirthDate/years);
   return ageYears;
@@ -483,8 +483,8 @@ function searchByMultipleTraits(people) {
         filteredPeople = multiSearchByGender(filteredPeople);
         break;
       case '2' :
-        // filteredPeople = multiSearchByAge(filteredPeople);
-        //break;
+        filteredPeople = multiSearchByAge(filteredPeople);
+        break;
       case '3' :
         filteredPeople = multiSearchByDateOfBirth(filteredPeople);
         break;
@@ -539,7 +539,7 @@ function multiSearchByDateOfBirth(people){
 function multiSearchByAge(filteredPeople){
   let ageSearched = promptFor("Please enter the person's age in years:", validateAge);    
     let arrayWithAges = []
-    arrayWithAges = people.map(function(element){
+    arrayWithAges = filteredPeople.map(function(element){
       element.age = howOld(element);
       return element;
     });
@@ -547,11 +547,19 @@ function multiSearchByAge(filteredPeople){
     return el.age == ageSearched;
   });
   alert(displayPeopleByAge.length+" persons found based on your search.");
-  while(displayPeopleByAge.length == 0){
-    displayPeople(displayPeopleByAge);
-    return displayPeopleByAge;
-    } 
+  if(displayPeopleByAge.length == 1){
+    var filteredPeople = data;
+    mainMenu(displayPeopleByAge[0], filteredPeople);
   }
+  else if(displayPeopleByAge.length > 1){
+    alert("Please enter more info to narrow down your search.");
+    searchByMultipleTraits(displayPeopleByAge);
+  }
+  else{
+    alert("No match found");
+    searchByMultipleTraits(filteredPeople);
+  }
+}
 
 
 function multiSearchByHeight(people){
