@@ -156,6 +156,8 @@ function findDescendants(people, foundPerson){
   return descendantsFound;
 }
 
+
+//to display the descendants
 function displayDescendants(people, foundPerson){
    let personChildren = people.filter(function(el){
     return el.parents[0]===foundPerson.id || el.parents[1] === foundPerson.id;
@@ -177,7 +179,6 @@ function displayDescendants(people, foundPerson){
     else{
       displayDescendants = "No descendants to display."
     }
-
   alert(displayDescendants);
 }
 
