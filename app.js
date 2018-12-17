@@ -137,7 +137,6 @@ function findSpouse(people, foundPerson){
 
 //function to find for children, checks if there aren't , returns it -- need to correct for parent[index 1]
 function findChildren(people, foundPerson){
-  let i = 0;
 		var children = people.filter(function(el){
     return el.parents[0]===foundPerson.id || el.parents[1] === foundPerson.id;
 	});
@@ -154,21 +153,46 @@ function findChildren(people, foundPerson){
 
 //find children recursion
 function findDescendants(people, foundPerson){
-   let childrenFound = people.filter(function(el){
-    return parseInt(el.parents) === foundPerson.id;
+   let descendantsFound = people.filter(function(el){
+    return el.parents[0]===foundPerson.id || el.parents[1] === foundPerson.id;
   });
-  if(childrenFound.length > 0){
-    return findDescendants(people, childrenFound[childrenFound.length - 1]);
+  if(descendantsFound.length > 1){
+    var grandChildren = findDescendants(people, descendantsFound[descendantsFound.length - 1]);
+    descendantsFound.push(grandChildren);
+    return descendantsFound;
   }
+  else if(descendantsFound.length == 1){
+    return descendantsFound;
+  }
+  else{
+    return descendantsFound = [{"firstName": "None", "lastName": "Found"}];
+  }
+  return descendantsFound;
 }
 
 function displayDescendants(people, foundPerson){
-   let personChildren = findChildren(people, foundPerson);
-   for(let i = 0; i < personChildren.length; i++){
-   var descendants = findDescendants(people, personChildren[i]);
-  }
-  return descendants;
+   let personChildren = people.filter(function(el){
+    return el.parents[0]===foundPerson.id || el.parents[1] === foundPerson.id;
+  });
+   if(personChildren.length > 0){
+      for(let i = 0; i < personChildren.length; i++){
+        var descendants = findDescendants(people, personChildren[i]);
+      }
+        var displayDescendants = "Children: "+findChildren(people, foundPerson).join(", ")+"\n";
+      if(descendants.length > 0){
+        displayDescendants += "Grand Children: "+descendants.map(function(el){
+        return el.firstName+" "+el.lastName;
+        });
+      }
+    else{
+       displayDescendants += "No Grand Children.";
+      }
+    }
+    else{
+      displayDescendants = "No descendants to display."
+    }
 
+  alert(displayDescendants);
 }
 
 // function to find for parents, as parents were in an array in database, checks for if there arent, return appropriately
