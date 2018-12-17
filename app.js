@@ -51,15 +51,16 @@ function mainMenu(person, people){
 
   switch(displayOption){
     case "info":
-    // TODO: get person's info
+    // TODO: get person's info - done
 		displayPerson(person);
     break;
     case "family":
-    // TODO: get person's family
+    // TODO: get person's family - done
 		displayFamily(people, person);
     break;
     case "descendants":
     // TODO: get person's descendants
+    displayDescendants(people, person);
     break;
     case "restart":
     app(people); // restart
@@ -116,10 +117,12 @@ function displayFamily(people, foundPerson){
   let displayChildren = findChildren(people, foundPerson);
 	var personFamily = "Spouse: " + displaySpouse[0].firstName+" "+displaySpouse[0].lastName+ "\n";
 	    personFamily += "Children: " + displayChildren.join(", ")+"."+ "\n";
-		 // personFamily += "Parents: " + displayParents(people, foundPerson) + "\n";
+		  personFamily += "Parents: " + findParents(people, foundPerson) + "\n";
     alert(personFamily);
+    return;
 }
 
+// function to find for spouse and returns it
 function findSpouse(people, foundPerson){
 		let spouse = people.filter(function(el){
 			return el.currentSpouse===foundPerson.id		
@@ -132,26 +135,77 @@ function findSpouse(people, foundPerson){
     return spouse;
   }
 
+//function to find for children, checks if there aren't , returns it -- need to correct for parent[index 1]
 function findChildren(people, foundPerson){
-		let children = people.filter(function(el){
-		  return parseInt(el.parents)===foundPerson.id;
+  let i = 0;
+		var children = people.filter(function(el){
+    return el.parents[0]===foundPerson.id || el.parents[1] === foundPerson.id;
 	});
-		if(children.length >= 1){
+  	if(children.length >= 1){
       children = children.map(function(el){
         return el.firstName + " " + el.lastName;
       });
     }
     else{
-      children = ["None."];
+      children = ["None"];
     }
     return children;
 }
 
-// function findParents(people, foundPerson){
-// 		var parents = people.filter( function(el){
-// 		  return el.id===foundPerson.parents;
-//     });
+//find children recursion
+function findDescendants(people, foundPerson){
+   let childrenFound = people.filter(function(el){
+    return parseInt(el.parents) === foundPerson.id;
+  });
+  if(childrenFound.length > 0){
+    return findDescendants(people, childrenFound[childrenFound.length - 1]);
+  }
+}
 
+function displayDescendants(people, foundPerson){
+   let personChildren = findChildren(people, foundPerson);
+   for(let i = 0; i < personChildren.length; i++){
+   var descendants = findDescendants(people, personChildren[i]);
+  }
+  return descendants;
+
+}
+
+// function to find for parents, as parents were in an array in database, checks for if there arent, return appropriately
+function findParents(people, foundPerson){
+    let parents = [];
+    for(let i = 0; i < 2; i++){
+		parents.push(people.filter( function(el){
+		  return el.id === parseInt(foundPerson.parents[i]);
+    }));
+  }
+    if(parents[0].length >= 1){
+      let parentsOneArray = parents[0];
+      let parentsTwoArray = parents[1];
+      // let displayParents = parents[0][0].firstName+" "+parents[0][0].lastName+", ";
+      // displayParents += parents[1][0].firstName+" "+parents[1][0].lastName+".";
+      if(parentsOneArray.length == 1 && parentsTwoArray.length == 0){  //if person have only 1 parent
+      let displayParent = parentsOneArray.map(function(el){
+        return el.firstName + " " + el.lastName;
+      });
+        return displayParent;
+      }
+      else if(parentsOneArray.length == 1 && parentsTwoArray.length == 1){ //if person have 2 parents
+      let displayParents = parents.map(function(el){
+        return el[0].firstName + " " + el[0].lastName;
+      });
+        return displayParents;
+      }
+      else{
+        return;
+      }
+    }
+    else{
+      let noParents = "No Parents Found in database";
+      return noParents;
+    } 
+    
+}
 
 // function that prompts and validates user input
 function promptFor(question, valid){
@@ -179,24 +233,30 @@ function searchByTraits(people){
     case '0': //for Multiple Traits
       searchByMultipleTraits(people);
     case '1': //search by gender
-      searchByGender(people); 
+      searchByGender(people);
+      break;
     case '2': //search by Age
-      searchByAge(people);    
+      searchByAge(people);
+      break;   
     case '3': // search by date of birth
       searchByDateOfBirth(people);
+      break;
     case '4': //search by Height
       searchByHeight(people);
+      break;
     case '5': //seacrh by weight
       searchByWeight(people);
+      break;
     case '6': //search by eye color
       searchByEyeColor(people);
+      break;
     case '7': // search by occupation
       searchByOccupation(people);
+      break;
     case '8':  //goes back to main function app
       app(people);
     case '9': //to quit from the application
       return;
-
     default:
       searchByTraits(people); // restart app
       break;
@@ -243,7 +303,6 @@ function searchByHeight(people){
   alert("Please enter the name of the person now:")
   let personFoundByHeight = searchByName(displayPeopleByHeight);
   mainMenu(personFoundByHeight[0], people);   //couldn't pass this as object in main menu function, so did this little trick?Question?is this right way??
-
 }
 
 function searchByWeight(people){
