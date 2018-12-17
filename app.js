@@ -122,7 +122,6 @@ function findSpouse(people, foundPerson){
 
 //function to find for children, checks if there aren't , returns it -- need to correct for parent[index 1]
 function findChildren(people, foundPerson){
-  let i = 0;
 		var children = people.filter(function(el){
     return el.parents[0]===foundPerson.id || el.parents[1] === foundPerson.id;
 	});
@@ -139,21 +138,47 @@ function findChildren(people, foundPerson){
 
 //find children recursion
 function findDescendants(people, foundPerson){
-   let childrenFound = people.filter(function(el){
-    return parseInt(el.parents) === foundPerson.id;
+   let descendantsFound = people.filter(function(el){
+    return el.parents[0]===foundPerson.id || el.parents[1] === foundPerson.id;
   });
-  if(childrenFound.length > 0){
-    return findDescendants(people, childrenFound[childrenFound.length - 1]);
+  if(descendantsFound.length > 1){
+    var grandChildren = findDescendants(people, descendantsFound[descendantsFound.length - 1]);
+    descendantsFound.push(grandChildren);
+    return descendantsFound;
   }
+  else if(descendantsFound.length == 1){
+    return descendantsFound;
+  }
+  else{
+    return descendantsFound = [{"firstName": "None", "lastName": "Found"}];
+  }
+  return descendantsFound;
 }
 
-function displayDescendants(people, foundPerson){
-   let personChildren = findChildren(people, foundPerson);
-   for(let i = 0; i < personChildren.length; i++){
-   var descendants = findDescendants(people, personChildren[i]);
-  }
-  return descendants;
 
+//to display the descendants
+function displayDescendants(people, foundPerson){
+   let personChildren = people.filter(function(el){
+    return el.parents[0]===foundPerson.id || el.parents[1] === foundPerson.id;
+  });
+   if(personChildren.length > 0){
+      for(let i = 0; i < personChildren.length; i++){
+        var descendants = findDescendants(people, personChildren[i]);
+      }
+        var displayDescendants = "Children: "+findChildren(people, foundPerson).join(", ")+"\n";
+      if(descendants.length > 0){
+        displayDescendants += "Grand Children: "+descendants.map(function(el){
+        return el.firstName+" "+el.lastName;
+        });
+      }
+    else{
+       displayDescendants += "No Grand Children.";
+      }
+    }
+    else{
+      displayDescendants = "No descendants to display."
+    }
+  alert(displayDescendants);
 }
 
 // function to find for parents, as parents were in an array in database, checks for if there arent, return appropriately
@@ -213,10 +238,11 @@ function chars(input){
 }
 
 function searchByTraits(people){
-  let searchTypeByTrait = prompt("How do you want to perform your search? Enter \n'0' to ENTER MULTIPLE TRAITS. \n'1' for GENDER. \n'2' for Age. \n'3' for DATE OF BIRTH. \n'4' for HEIGHT. \n'5' for WEIGHT. \n'6' for EYECOLOR. \n'7' for OCCUPATION. \n'8' to RESTART. \n'9' to QUIT.");
+  let searchTypeByTrait = prompt("How do you want to perform your search? Enter \n'1' for GENDER. \n'2' for Age. \n'3' for DATE OF BIRTH. \n'4' for HEIGHT. \n'5' for WEIGHT. \n'6' for EYECOLOR. \n'7' for OCCUPATION. \n'8' to RESTART. \n'9' to QUIT. \n or Enter'0' to ENTER MULTIPLE TRAITS. ");
   switch(searchTypeByTrait){
     case '0': //for Multiple Traits
       searchByMultipleTraits(people);
+      break;
     case '1': //search by gender
       searchByGender(people);
       break;
@@ -241,7 +267,7 @@ function searchByTraits(people){
     case '8':  //goes back to main function app
       app(people);
     case '9': //to quit from the application
-      exit();
+      break;
     default:
       searchByTraits(people); // restart app
       break;
@@ -441,64 +467,64 @@ function validateNumber(input){
 //MULTIPLE TRAITS SEARCH FUNCTIONALITY - NOT DONE YET
 
 function searchByMultipleTraits(people) {
-  var filteredPeople = people;
- 
-  alert("Enter each desired trait to search for: ");
- 
-
-    filteredPeople = multiSearchByGender
-    
-
-    filteredPeople = multiSearchByDateOfBirth(filteredPeople);
-      
-
-    filteredPeople = multiSearchByHeight(filteredPeople);
-      
-
-    filteredPeople = multiSearchByWeight(filteredPeople);
-      
-
-    filteredPeople = multiSearchByEyeColor(filteredPeople);
-
-    filteredPeople = multiSearchByAge(filteredPeople);
-    
-    displayPeople(filteredPeople);
-    
-    alert("Please enter the name of the person now:");
-    
-    let personFoundByMultiSearch = searchByName(people);
-    
-    mainMenu(personFoundByMultiSearch[0], people);
+    var filteredPeople = people;
+    let searchTrait = prompt("How do you want to start your search? Enter: \n 1 for GENDER. \n2 for Age. \n3 for DATE OF BIRTH. \n4 for HEIGHT. \n5 for WEIGHT. \n6 for EYECOLOR. \n7 for OCCUPATION. \n8 to RESTART. \n9 to QUIT.");
+    switch(searchTrait){
+      case '1' :
+        filteredPeople = multiSearchByGender(filteredPeople);
+        break;
+      case '2' :
+        // filteredPeople = multiSearchByAge(filteredPeople);
+        //break;
+      case '3' :
+        filteredPeople = multiSearchByDateOfBirth(filteredPeople);
+        break;
+      case '4' :
+        filteredPeople = multiSearchByHeight(filteredPeople);
+        break;
+      case '5' :
+        filteredPeople = multiSearchByWeight(filteredPeople);
+        break;
+      case '6' :
+        filteredPeople = multiSearchByEyeColor(filteredPeople);
+        break;
+      case '7' :
+        filteredPeople = multiSearchByOccupation(filteredPeople);
+        break;
+      case '8' :
+        app(people);
+      case '9' :
+        break;
+  }
 }
 
 function multiSearchByGender(people){
-    let yesNoQuestion = promptFor("Do you know the name of the person you are looking for? Enter 'yes' or 'no'", yesNo).toLowerCase();
-    
-    switch(yesNOQuestion){
-    case 'yes':
     let typeGender = promptFor("Enter 'male' or 'female'", validateGender);
     let filteredPeople = people.filter(function(el){
         return el.gender == typeGender.toLowerCase(); 
-    });
+        });
     alert("Total "+filteredPeople.length+" persons found based on your search");
-    displayPeople(filteredPeople);
+    alert("Please refine your search.")
+    searchByMultipleTraits(filteredPeople);
     return filteredPeople;
-    case 'no':
-      break;
-      default:
-      searchByMultipleTraits(people);
-      break;
-    }
 }
 
-function multiSearchByDateOfBirth(filteredPeople){
-  let dateOfBirth = promptFor("Please enter the date of birth: xx/xx/xxxx format", validateDate);
-  let filteredByDob = filteredPeople.filter(function(el){
-      return el.dob == dateOfBirth;   //gotta fix the comparison of one digit month to two digit month.      
-  });
-  alert("Total "+filteredByDob.length+" persons found based on your search");
-    displayPeople(filteredByDob);
+function multiSearchByDateOfBirth(people){
+    let dateOfBirth = promptFor("Please enter the date of birth: xx/xx/xxxx format", validateDate);
+    let filteredByDob = people.filter(function(el){
+        return el.dob == dateOfBirth;   //gotta fix the comparison of one digit month to two digit month.      
+    });
+    alert("Total "+filteredByDob.length+" persons found based on your search");
+    if(filteredByDob.length == 1){
+      var filteredPeople = data;
+      mainMenu(filteredByDob[0], filteredPeople);
+    }
+    else{
+      alert("Please enter more info to narrow down your search.")
+      searchByMultipleTraits(filteredByDob);
+    }
     return filteredByDob;
+
   }
 
 function multiSearchByAge(filteredPeople){
@@ -527,36 +553,97 @@ function multiSearchByHeight(people){
 alert("Total "+filteredByHeight.length+" persons found based on your search");
     displayPeople(filteredByHeight);
     return filteredByHeight;
-  }
-    
+  }    
+
+function multiSearchByHeight(people){
+    let heightSearched = promptFor("Please enter the person height in inches:", validateNumber);
+    let filteredByHeight = people.filter(function(el){
+      return el.height == heightSearched;
+    });
+    alert("Total "+filteredByHeight.length+" persons found based on your search");
+    if(filteredByHeight.length == 1){
+      let filteredPeople = data;
+      mainMenu(filteredByHeight[0], filteredPeople);
+      return;
+    }
+    else if(filteredByHeight.length > 1){
+      alert("Your search returned more than one result. Please add more info");
+      searchByMultipleTraits(filteredByHeight);
+      return;
+    }
+    else{
+      alert("Need More info to search.");
+      searchByMultipleTraits(people);
+      return;
+    }
+}
 
 function multiSearchByWeight(people){
-  let weightSearched = promptFor("Please enter the person weight in lbs:", validateNumber);
-  let filteredByWeight = filteredPeople.filter(function(el){
-      return el.weight == weightSearched;
-  });
-  alert("Total "+filteredByWeight.length+" persons found based on your search");
-    displayPeople(filteredByWeight);
-    return filteredByWeight;
-  }
-    
+    let weightSearched = promptFor("Please enter the person weight in lbs:", validateNumber);
+    let filteredByWeight = people.filter(function(el){
+        return el.weight == weightSearched;
+    });
+    alert("Total "+filteredByWeight.length+" persons found based on your search");
+   if(filteredByWeight.length == 1){
+      let filteredPeople = data;
+      mainMenu(filteredByWeight[0], filteredPeople);
+      return;
+    }
+    else if(filteredByWeight.length > 1){
+      alert("Your search returned more than one result. Please add more info");
+      searchByMultipleTraits(filteredByWeight);
+      return;
+    }
+    else{
+      alert("Need More info to search.");
+      searchByMultipleTraits(people);
+      return;
+    }
+}
 function multiSearchByEyeColor(people){
   let searchedColor = promptFor("Please enter the Eye Color:", validateAlphabets);
-  let filteredByEye = filteredPeople.filter(function(el){
+  let filteredByEye = people.filter(function(el){
     return el.eyeColor.toLowerCase() == searchedColor.toLowerCase();
   });
    alert("Total "+filteredByEye.length+" persons found based on your search");
-    displayPeople(filteredByEye);
-    return filteredByEye;
-  }
+   if(filteredByEye.length == 1){
+    let filteredPeople = data;
+    mainMenu(filteredByEye[0], filteredPeople);
+    return;
+   }
+   else if(filteredByEye.length > 1){
+    alert("Your search returned more than 1 result. Please add more info")
+    searchByMultipleTraits(filteredByEye);
+    return;
+   }
+   else{
+    alert("Need more info to search.");
+    searchByMultipleTraits(people);
+    return;
+   }
+}
     
 
 function multiSearchByOccupation(people){
   let searchedOccupation = promptFor("Please enter the person's Occupation:", validateAlphabets);
-  let filteredByOcc = filteredPeople.filter(function(el){
+  let filteredByOcc = people.filter(function(el){
     return el.occupation.toLowerCase() == searchedOccupation.toLowerCase();
   });
- alert("Total "+filteredByOcc.length+" persons found based on your search");
-    displayPeople(filteredByOcc);
-    return filteredByOcc;
-  }
+  alert("Total "+filteredByOcc.length+" persons found based on your search");
+   if(filteredByOcc.length == 1){
+    let filteredPeople = data;
+    mainMenu(filteredByOcc[0], filteredPeople);
+    return;
+   }
+   else if(filteredByOcc.length > 1){
+    alert("Your search returned more than 1 result. Please add more info");
+    searchByMultipleTraits(filteredByOcc);
+    return;
+   }
+   else{
+    alert("Need more info to search.");
+    searchByMultipleTraits(people);
+    return;
+   }
+}
+   
