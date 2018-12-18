@@ -555,6 +555,7 @@ function multiSearchByDateOfBirth(people){
 function multiSearchByAge(filteredPeople){
   let ageSearched = promptFor("Please enter the person's age in years:", validateAge);    
     let arrayWithAges = []
+
     arrayWithAges = filteredPeople.map(function(element){
       element.age = howOld(element);
       return element;
@@ -562,6 +563,7 @@ function multiSearchByAge(filteredPeople){
   let displayPeopleByAge = arrayWithAges.filter(function(el){
     return el.age == ageSearched;
   });
+
   alert(displayPeopleByAge.length+" persons found based on your search.");
   if(displayPeopleByAge.length == 1){
     var filteredPeople = data;
