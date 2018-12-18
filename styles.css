@@ -1,0 +1,12 @@
+h1{
+	font-size: 120px;
+	text-align: center;
+	font-weight: bold;
+	box-shadow: 5px 15px;
+	letter-spacing: 15px;
+}
+
+button{
+	padding: 5px 5px;
+	font-size: 25px;
+	

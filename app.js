@@ -297,6 +297,11 @@ function searchByDateOfBirth(people){
       dateOfBirthStringify[0] = dateOfBirthStringify[0][1];
       dateOfBirth = dateOfBirthStringify.join("/");
     }
+    if(dateOfBirthStringify[1][0] == 0)
+    {
+      dateOfBirthStringify[1] = dateOfBirthStringify[1][1];
+      dateOfBirth = dateOfBirthStringify.join("/");
+    }
   let displayPeopleByDob = people.filter(function(el){
       return el.dob === dateOfBirth;       //gotta fix the comparison of one digit month to two digit month.      
   });
@@ -520,6 +525,17 @@ function multiSearchByGender(people){
 
 function multiSearchByDateOfBirth(people){
     let dateOfBirth = promptFor("Please enter the date of birth: xx/xx/xxxx format", validateDate);
+    let dateOfBirthStringify = dateOfBirth.split("/");
+    if(dateOfBirthStringify[0][0] == 0)
+    {
+      dateOfBirthStringify[0] = dateOfBirthStringify[0][1];
+      dateOfBirth = dateOfBirthStringify.join("/");
+    }
+    if(dateOfBirthStringify[1][0] == 0)
+    {
+      dateOfBirthStringify[1] = dateOfBirthStringify[1][1];
+      dateOfBirth = dateOfBirthStringify.join("/");
+    }
     let filteredByDob = people.filter(function(el){
         return el.dob == dateOfBirth;   //gotta fix the comparison of one digit month to two digit month.      
     });
